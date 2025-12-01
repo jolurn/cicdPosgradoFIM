@@ -139,8 +139,7 @@ jobs:
                   "environment": "production",
                   "team": "data-engineering"
                 },
-                "spark_conf": {
-                  "spark.databricks.cluster.profile": "serverless",
+                "spark_conf": {                  
                   "spark.databricks.repl.allowedLanguages": "python,sql"
                 }
               }
