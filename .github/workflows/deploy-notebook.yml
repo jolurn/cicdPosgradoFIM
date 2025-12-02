@@ -17,8 +17,8 @@ jobs:
       run: |
         ORIGIN_HOST=${{ secrets.DATABRICKS_ORIGIN_HOST }}
         ORIGIN_TOKEN=${{ secrets.DATABRICKS_ORIGIN_TOKEN }}
-        NOTEBOOK_BASE="/Workspace/Users/developer_ramos_outlook.com#ext#@developerramosoutlook.onmicrosoft.com/source_ntbk"
-        NOTEBOOKS=("ntbk_1" "ntbk_2")  # Agrega más según necesitesas
+        NOTEBOOK_BASE="/Workspace/Users/developer_ramos_outlook.com#ext#@developerramosoutlook.onmicrosoft.com"
+        NOTEBOOKS=("1_Preparacion_Ambiente_FIM" "0_Drop_All_FIM" "2_DDLs_Bronze_FIM" "3_DDLs_Silver_FIM" "4_DDLs_Golden_FIM" "5A_Ingesta_Dimensiones_1_FIM" "5B_Ingesta_Dimensiones_2_FIM" "5C_Ingesta_Usuarios_FIM" "5D_Ingesta_Alumno_FIM" "5E_Ingesta_Hechos_FIM" "6_Transform_Bronze_Silver_FIM" "7_Agregacion_Silver_Golden_FIM" "8_Grants_FIM" "9_DeltaSharing_FIM")  # Agrega más según necesitesas
         mkdir -p notebooks_to_deploy
         for nb in "${NOTEBOOKS[@]}"; do
           echo "Exportando $nb en modo raw..."
@@ -32,7 +32,7 @@ jobs:
       run: |
         DEST_HOST=${{ secrets.DATABRICKS_DEST_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_DEST_TOKEN }}
-        DEST_BASE="/py/scripts/main"
+        DEST_BASE="/proyecto_posgrado/"
         for file in notebooks_to_deploy/*.py; do
           name=$(basename "$file" .py)
           dest_path="$DEST_BASE/$name"
@@ -123,33 +123,287 @@ jobs:
         # Crear el JSON del workflow usando cluster existente
         cat > workflow_config.json << EOF
         {
-          "name": "WF_ADB",
+          "name": "WF_POSGRADO",
           "format": "MULTI_TASK",
           "tasks": [
             {
-              "task_key": "tarea1_notebook1",
-              "description": "Ejecuta notebook ntbk_1",
+              "task_key": "1_Preparacion_Ambiente_FIM",
+              "description": "Ejecuta notebook 1_Preparacion_Ambiente_FIM",
               "notebook_task": {
-                "notebook_path": "/py/scripts/main/ntbk_1",
-                "source": "WORKSPACE"
+                "notebook_path": "/proyecto_posgrado/1_Preparacion_Ambiente_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411"
+                }
               },
               "existing_cluster_id": "$CLUSTER_ID",
               "timeout_seconds": 3600,
               "max_retries": 2
             },
             {
-              "task_key": "tarea2_notebook2",
-              "description": "Ejecuta notebook ntbk_2",
+              "task_key": "0_Drop_All_FIM",
+              "description": "Ejecuta notebook 0_Drop_All_FIM",
               "notebook_task": {
-                "notebook_path": "/py/scripts/main/ntbk_2",
-                "source": "WORKSPACE"
+                "notebook_path": "/proyecto_posgrado/0_Drop_All_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",
+                  "containerName": "fim-bronze",
+                  "catalogo": "catalog_fim"
+                }
               },
               "existing_cluster_id": "$CLUSTER_ID",
               "timeout_seconds": 3600,
               "max_retries": 2,
               "depends_on": [
                 {
-                  "task_key": "tarea1_notebook1"
+                  "task_key": "1_Preparacion_Ambiente_FIM"
+                }
+              ]
+            },
+            {
+              "task_key": "2_DDLs_Bronze_FIM",
+              "description": "Ejecuta notebook 2_DDLs_Bronze_FIM",
+              "notebook_task": {
+                "notebook_path": "/proyecto_posgrado/2_DDLs_Bronze_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",
+                  "storageLocation": "abfss://fim-bronze@adlsnolascodev2411.dfs.core.windows.net",
+                  "catalogo": "catalog_fim"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "0_Drop_All_FIM"
+                }
+              ]
+            },
+            {
+              "task_key": "3_DDLs_Silver_FIM",
+              "description": "Ejecuta notebook 3_DDLs_Silver_FIM",
+              "notebook_task": {
+                "notebook_path": "/proyecto_posgrado/3_DDLs_Silver_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",
+                  "storageLocation": "abfss://fim-bronze@adlsnolascodev2411.dfs.core.windows.net",
+                  "catalogo": "catalog_fim"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "2_DDLs_Bronze_FIM"
+                }
+              ]
+            },
+            {
+              "task_key": "4_DDLs_Golden_FIM",
+              "description": "Ejecuta notebook 4_DDLs_Golden_FIM",
+              "notebook_task": {
+                "notebook_path": "/proyecto_posgrado/4_DDLs_Golden_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",
+                  "storageLocation": "abfss://fim-bronze@adlsnolascodev2411.dfs.core.windows.net",
+                  "catalogo": "catalog_fim"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "3_DDLs_Silver_FIM"
+                }
+              ]
+            },
+            {
+              "task_key": "5A_Ingesta_Dimensiones_1_FIM",
+              "description": "Ejecuta notebook 5A_Ingesta_Dimensiones_1_FIM",
+              "notebook_task": {
+                "notebook_path": "/proyecto_posgrado/5A_Ingesta_Dimensiones_1_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",                  
+                  "catalogo": "catalog_fim"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "4_DDLs_Golden_FIM"
+                }
+              ]
+            },
+            {
+              "task_key": "5B_Ingesta_Dimensiones_2_FIM",
+              "description": "Ejecuta notebook 5B_Ingesta_Dimensiones_2_FIM",
+              "notebook_task": {
+                "notebook_path": "/proyecto_posgrado/5B_Ingesta_Dimensiones_2_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",                  
+                  "catalogo": "catalog_fim"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "4_DDLs_Golden_FIM"
+                }
+              ]
+            },
+            {
+              "task_key": "5C_Ingesta_Usuarios_FIM",
+              "description": "Ejecuta notebook 5C_Ingesta_Usuarios_FIM",
+              "notebook_task": {
+                "notebook_path": "/proyecto_posgrado/5C_Ingesta_Usuarios_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",                 
+                  "catalogo": "catalog_fim"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "5A_Ingesta_Dimensiones_1_FIM"
+                },
+                {
+                  "task_key": "5B_Ingesta_Dimensiones_2_FIM"
+                }
+              ]
+            },
+            {
+              "task_key": "5D_Ingesta_Alumno_FIM",
+              "description": "Ejecuta notebook 5D_Ingesta_Alumno_FIM",
+              "notebook_task": {
+                "notebook_path": "/proyecto_posgrado/5D_Ingesta_Alumno_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",
+                  "catalogo": "catalog_fim"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "5C_Ingesta_Usuarios_FIM"
+                }
+              ]
+            },
+            {
+              "task_key": "5E_Ingesta_Hechos_FIM",
+              "description": "Ejecuta notebook 5E_Ingesta_Hechos_FIM",
+              "notebook_task": {
+                "notebook_path": "/proyecto_posgrado/5E_Ingesta_Hechos_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",
+                  "catalogo": "catalog_fim"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "5D_Ingesta_Alumno_FIM"
+                }
+              ]
+            },
+            {
+              "task_key": "6_Transform_Bronze_Silver_FIM",
+              "description": "Ejecuta notebook 6_Transform_Bronze_Silver_FIM",
+              "notebook_task": {
+                "notebook_path": "/proyecto_posgrado/6_Transform_Bronze_Silver_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",
+                  "catalogo": "catalog_fim"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "5E_Ingesta_Hechos_FIM"
+                }
+              ]
+            },
+            {
+              "task_key": "7_Agregacion_Silver_Golden_FIM",
+              "description": "Ejecuta notebook 7_Agregacion_Silver_Golden_FIM",
+              "notebook_task": {
+                "notebook_path": "/proyecto_posgrado/7_Agregacion_Silver_Golden_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",
+                  "catalogo": "catalog_fim"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "6_Transform_Bronze_Silver_FIM"
+                }
+              ]
+            },
+            {
+              "task_key": "8_Grants_FIM",
+              "description": "Ejecuta notebook 8_Grants_FIM",
+              "notebook_task": {
+                "notebook_path": "/proyecto_posgrado/8_Grants_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",
+                  "catalogo": "catalog_fim"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "7_Agregacion_Silver_Golden_FIM"
+                }
+              ]
+            },
+            {
+              "task_key": "9_DeltaSharing_FIM",
+              "description": "Ejecuta notebook 9_DeltaSharing_FIM",
+              "notebook_task": {
+                "notebook_path": "/proyecto_posgrado/9_DeltaSharing_FIM",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "storageName": "adlsnolascodev2411",
+                  "catalogo": "catalog_fim"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "8_Grants_FIM"
                 }
               ]
             }
