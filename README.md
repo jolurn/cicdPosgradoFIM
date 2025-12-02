@@ -70,9 +70,11 @@ Pipeline ETL de nivel empresarial para el procesamiento de transacciones financi
 📊 Power BI Dashboards (Visualización ejecutiva)
 ```
 <div align="center">
+    <!-- contenido -->
     
-![Tech Stack](https://skillicons.dev/icons?i=azure,python,git,github)
-
+    <div align="center">
+        ![Tech Stack](https://skillicons.dev/icons?i=azure,python,git,github)
+    </div>
 </div>
 
 ![Texto descriptivo](Arquitectura.png)
