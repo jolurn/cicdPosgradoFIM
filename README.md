@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎓 ETL Pipeline for FIM Postgraduate Student Payments System <img width="772" height="438" alt="image" src="https://github.com/user-attachments/assets/d4d3c84a-5363-4e2f-9f7b-74ea897c9e67" />
+# 🎓 ETL Pipeline for FIM Postgraduate Student Payments System <img width="30px" src="https://raw.githubusercontent.com/iampavangandhi/iampavangandhi/master/gifs/Hi.gif">
 
 ### Arquitectura Medallion en Azure Databricks
 
