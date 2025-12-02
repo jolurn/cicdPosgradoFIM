@@ -72,6 +72,7 @@ Pipeline ETL de nivel empresarial para el procesamiento de transacciones financi
 <div align="center">
 ![Tech Stack](https://skillicons.dev/icons?i=azure,python,git,github)
 </div>
+
 ![Texto descriptivo](Arquitectura.png)
 
 
