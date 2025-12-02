@@ -71,11 +71,9 @@ Pipeline ETL de nivel empresarial para el procesamiento de transacciones financi
 ```
 ![Texto descriptivo](Arquitectura.png)
 
-<div align="center">
-    
-![Tech Stack](https://skillicons.dev/icons?i=azure,python,git,github)
-
-</div>
+<p align="center">
+    <img src="https://skillicons.dev/icons?i=azure,python,git,github" alt="Tech Stack">
+</p>
 
 ### 📦 Capas del Pipeline
 
