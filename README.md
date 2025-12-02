@@ -3,7 +3,7 @@
 # 🎓 ETL Pipeline for FIM Postgraduate Student Payments System
 ### Arquitectura Medallion en Azure Databricks
 
-![My Skills](https://skillicons.dev/icons?i=html,databricks,python,spark,git,github,aws,azure,flask,tensorflow,vscode)
+![My Skills](https://skillicons.dev/icons?i=html,databricks,python,spark,git,github,azure)
 
 *Pipeline ETL para el procesamiento y análisis de pagos de estudiantes del Posgrado FIM-UNI con arquitectura Medallion y despliegue continuo*
 
